@@ -73,7 +73,32 @@ void drawSence()
 			glVertex3f(-3.0f, 1.0f, -10.0f);
 		glEnd();
 
+		glLineWidth(10.0f);
+		glColor4ub(0, 0, 0, 255);
+		glBegin(GL_LINES);
+			glVertex3f(-6.0f, 2.0f, -10.0f);
+			glVertex3f(-3.0f, 2.0f, -10.0f);
+		glEnd();
 
+		glLineWidth(5.0f);
+		glColor4ub(255, 255, 255, 255);
+		glBegin(GL_LINES);
+			glVertex3f(-5.95f, 2.0f, -10.0f);
+			glVertex3f(-3.05f, 2.0f, -10.0f);
+		glEnd();
+		
+		// dash line
+		glEnable(GL_LINE_STIPPLE);
+		glLineStipple(1, 0xFF00);
+		glLineWidth(10.0f);
+		glColor4ub(0, 0, 0, 255);
+		glBegin(GL_LINES);
+			glVertex3f(-5.95f, 2.0f, -10.0f);
+			glVertex3f(-3.05f, 2.0f, -10.0f);
+		glEnd();
+		glDisable(GL_LINE_STIPPLE);
+
+		glLineWidth(3.0f);
 		glColor4ub(0, 255, 0, 255);
 		/*
 		GL_LINE_STRIP : line count == pt count -1; 
@@ -134,6 +159,10 @@ void drawSence()
 		GL_TRIANGLES : triangle count == (int)(pt count / 3); 
 		p0->p1->p2;
 		*/
+		glPushMatrix();
+		glTranslatef(0.5f,0.0f, 0.0f);
+		//glRotatef(30,-4.0f,-1.25f,-10.0f);
+		glScalef(1.0f, 1.0f, 1.0f);
 		glBegin(GL_TRIANGLES);
 			// p0
 			glVertex3f(-5.0f, -1.0f + 0.5f, -10.f);
@@ -142,6 +171,7 @@ void drawSence()
 			// p2
 			glVertex3f(-5.0f, -2.5f + 0.5f, -10.f);
 		glEnd();
+		glPopMatrix();
 
 		/*
 		GL_TRIANGLE_STRIP : triangle count ; 
