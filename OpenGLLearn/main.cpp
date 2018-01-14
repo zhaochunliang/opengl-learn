@@ -3,9 +3,11 @@
 #include <gl/GLU.h>
 #include "CTexture.h"
 #include "CObjModel.h"
+#include "CCamera.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
+#pragma comment(lib, "winmm.lib")
 
 static unsigned int Pos_Left       = 10;
 static unsigned int Pos_Top        = 10;
@@ -13,6 +15,9 @@ static unsigned int ViewPortWidth  = 1280;
 static unsigned int ViewPortHeight = 700;
 static CTexture  earth_texture;
 static CObjModel earth_obj;
+static CCamera   camera;
+POINT originalPos;
+bool bRotateView = false;
 
 void init()
 {
@@ -25,6 +30,78 @@ LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(msg)
 	{
+	case WM_RBUTTONDOWN:
+		originalPos.x = LOWORD(lParam);
+		originalPos.y = HIWORD(lParam);
+		ClientToScreen(hwnd, &originalPos);
+		SetCapture(hwnd);
+		ShowCursor(false);
+		bRotateView = true;
+		break;
+	case WM_RBUTTONUP:
+		bRotateView = false;
+		SetCursorPos(originalPos.x, originalPos.y);
+		ReleaseCapture();
+		ShowCursor(true);
+		break;
+	case WM_MOUSEMOVE:
+		if (bRotateView)
+		{
+			POINT currentPos;
+			currentPos.x        = LOWORD(lParam);
+			currentPos.y        = HIWORD(lParam);
+			ClientToScreen(hwnd, &currentPos);
+			int deltaX                = currentPos.x - originalPos.x;
+			int deltaY                = currentPos.y - originalPos.y;
+			float angleRotatedByRight = (float)deltaY / 1000.0f;
+			float angleRotatedByUp    = (float)deltaX / 1000.0f;
+			camera.Yaw(-angleRotatedByUp);
+			camera.Pitch(-angleRotatedByRight);
+			SetCursorPos(originalPos.x, originalPos.y);
+		}
+		break;
+	case WM_KEYUP:
+		switch(wParam)
+		{
+		case VK_LEFT:
+		case 'A':
+			camera.mbMoveLeft = false;
+			break;
+		case VK_RIGHT:
+		case 'D':
+			camera.mbMoveRight = false;
+			break;
+		case VK_UP:
+		case 'W':
+			camera.mbMoveForward = false;
+			break;
+		case VK_DOWN:
+		case 'S':
+			camera.mbMoveBackward = false;
+			break;
+		}
+		break;
+	case WM_KEYDOWN:
+		switch(wParam)
+		{
+		case VK_LEFT:
+		case 'A':
+			camera.mbMoveLeft = true;
+			break;
+		case VK_RIGHT:
+		case 'D':
+			camera.mbMoveRight = true;
+			break;
+		case VK_UP:
+		case 'W':
+			camera.mbMoveForward = true;
+			break;
+		case VK_DOWN:
+		case 'S':
+			camera.mbMoveBackward = true;
+			break;
+		}
+		break;
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
@@ -32,9 +109,12 @@ LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd,msg,wParam,lParam);
 }
 
-void drawSence()
+void drawSence(float timeElapse)
 {
 	glLoadIdentity();
+
+	//set up camera
+	camera.Update(timeElapse);
 
 	// draw scene
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -114,6 +194,8 @@ INT WINAPI WinMain( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, 
 	
 	init();
 
+	static float sTimeSinceStartUp = timeGetTime() / 1000.0f;
+
 	// loop message
 	MSG msg;
 	while (true)
@@ -129,7 +211,11 @@ INT WINAPI WinMain( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, 
 			DispatchMessage(&msg);
 		}
 
-		drawSence();
+		float currentTime = timeGetTime() / 1000.0f;
+		float timeElapse  = currentTime - sTimeSinceStartUp;
+		sTimeSinceStartUp = currentTime;
+
+		drawSence(timeElapse);
 
 		// present scene to window
 		SwapBuffers(dc);
