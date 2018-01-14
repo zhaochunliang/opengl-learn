@@ -2,6 +2,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 #include "CTexture.h"
+#include "CObjModel.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -10,11 +11,13 @@ static unsigned int Pos_Left       = 10;
 static unsigned int Pos_Top        = 10;
 static unsigned int ViewPortWidth  = 1280;
 static unsigned int ViewPortHeight = 700;
-static CTexture texture;
+static CTexture  earth_texture;
+static CObjModel earth_obj;
 
 void init()
 {
-	texture.init("res/images/test.bmp");
+	earth_texture.init("res/images/earth.bmp");
+	earth_obj.Init("res/modules/Sphere.obj");
 }
 
 // define a self message process function
@@ -31,30 +34,14 @@ LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void drawSence()
 {
+	glLoadIdentity();
+
 	// draw scene
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture.mTextureId);
-	// draw triangle
-	{
-		glBegin(GL_TRIANGLES);
-			
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex3f(-5.0f,  5.0f, -20.f);
-			glTexCoord2f(0.0f, 1.0f);
-			glVertex3f(-5.0f, -5.0f, -20.f);
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex3f( 5.0f, -5.0f, -20.f);
-
-			glTexCoord2f(1.0f, 1.0f);
-			glVertex3f( 5.0f, -5.0f, -20.f);
-			glTexCoord2f(1.0f, 0.0f);
-			glVertex3f( 5.0f, 5.0f, -20.f);
-			glTexCoord2f(0.0f, 0.0f);
-			glVertex3f(-5.0f,  5.0f, -20.f);
-		glEnd();
-	}
+	glBindTexture(GL_TEXTURE_2D, earth_texture.mTextureId);
+	earth_obj.Draw();
 }
 
 
@@ -121,6 +108,10 @@ INT WINAPI WinMain( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, 
 	ShowWindow(hwnd,SW_SHOW);
 	UpdateWindow(hwnd);
 
+	//开启 面剔除功能，将看不到的背面剔除，不绘画;
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	
 	init();
 
 	// loop message

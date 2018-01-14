@@ -85,6 +85,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="控制台输出日志"
+				CommandLine="editbin /subsystem:console $(OutDir)/$(ProjectName).exe"
 			/>
 		</Configuration>
 		<Configuration
@@ -171,6 +173,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CObjModel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.cpp"
 				>
 			</File>
@@ -182,6 +188,18 @@
 				RelativePath=".\Util.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Vector2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\VertexData.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -189,11 +207,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CObjModel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Util.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VertexData.h"
 				>
 			</File>
 		</Filter>
