@@ -6,7 +6,7 @@
 class CTexture
 {
 public:
-	void init(const char* fileName);
+	void init(const char* fileName, GLenum wrapMode= GL_REPEAT);
 
 public:
 	GLuint mTextureId;

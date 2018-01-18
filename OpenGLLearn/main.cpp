@@ -1,9 +1,9 @@
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
-#include "CTexture.h"
-#include "CObjModel.h"
 #include "CCamera.h"
+#include "CEarth.h"
+#include "CSkyBox.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -13,16 +13,17 @@ static unsigned int Pos_Left       = 10;
 static unsigned int Pos_Top        = 10;
 static unsigned int ViewPortWidth  = 1280;
 static unsigned int ViewPortHeight = 700;
-static CTexture  earth_texture;
-static CObjModel earth_obj;
 static CCamera   camera;
+static CEarth    earth;
+static CSkyBox   skybox;
 POINT originalPos;
 bool bRotateView = false;
 
 void init()
 {
-	earth_texture.init("res/images/earth.bmp");
-	earth_obj.Init("res/modules/Sphere.obj");
+	earth.init("res/modules/Sphere.obj", "res/images/earth.bmp");
+	skybox.init("res/images/skybox/");
+
 }
 
 // define a self message process function
@@ -113,17 +114,18 @@ void drawSence(float timeElapse)
 {
 	glLoadIdentity();
 
+	glDisable(GL_DEPTH_TEST);
+	// draw scene
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	//set up camera
 	camera.Update(timeElapse);
 
-	// draw scene
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, earth_texture.mTextureId);
-	earth_obj.Draw();
-}
+	skybox.Draw(camera.mPosition.x, camera.mPosition.y, camera.mPosition.z);
 
+	earth.Draw();
+
+}
 
 INT WINAPI WinMain( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, __in_opt LPSTR lpCmdLine, __in int nShowCmd )
 {

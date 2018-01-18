@@ -2,7 +2,7 @@
 #include "Util.h"
 
 
-void CTexture::init(const char* fileName)
+void CTexture::init(const char* fileName, GLenum wrapMode /*= GL_REPEAT */)
 {
 	unsigned char * pFileContent = loadFileContent(fileName);
 	if (pFileContent != NULL)
@@ -15,8 +15,8 @@ void CTexture::init(const char* fileName)
 			glBindTexture(GL_TEXTURE_2D, mTextureId);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pPixelData);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
