@@ -1,7 +1,7 @@
 #ifndef OPENGL_LEARN_TEXTURE_H
 #define OPENGL_LEARN_TEXTURE_H
 #include <Windows.h>
-#include <gl/GL.h>
+#include <gl/glew.h>
 
 class CTexture
 {
