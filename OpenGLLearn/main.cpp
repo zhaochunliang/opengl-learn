@@ -11,7 +11,7 @@ static unsigned int Pos_Top        = 10;
 static unsigned int ViewPortWidth  = 800;
 static unsigned int ViewPortHeight = 600;
 
-CTexture     texture;
+CTexture     texture[2];
 CGPUProgram program[3];
 GLuint      VBO[3];
 
@@ -35,12 +35,12 @@ static const GLfloat g_vertex_buffer_data_1[] = {
 // An array of 3 vectors which represents 3 vertices
 // [{coordinate, color, texcoord},{coordinate, color, texcoord},{coordinate, color, texcoord}]
 static const GLfloat g_vertex_buffer_data_2[] = {
-	-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-	-1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-	 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-	 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-	 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-	-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+	-1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+	 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+	 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 };
 
 void init()
@@ -58,43 +58,25 @@ void init()
 
 	glClearColor(0.1f, 0.4f, 0.6f, 1.0f);
 
-	texture.init("res/images/test.bmp");
+	texture[0].init("res/images/earth/earthsatellite.bmp");
+	texture[1].init("res/images/earth/earthcloudmap.bmp");
 
 	//to create three vertex buffer objects on GPU
 	glGenBuffers(3, VBO);
-
-	//to copy data from CPG to GPU
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data_0), g_vertex_buffer_data_0, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data_1), g_vertex_buffer_data_1, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data_2), g_vertex_buffer_data_2, GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	// to Organize Shader Program
-	program[0].AttatchShader(GL_VERTEX_SHADER,    "res/shaders/simple_0.vs");
-	program[0].AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/simple_0.fs");
-	program[0].Link();
-	program[0].DetectAttribute("pos");
 
-	program[1].AttatchShader(GL_VERTEX_SHADER,    "res/shaders/simple_1.vs");
-	program[1].AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/simple_1.fs");
-	program[1].Link();
-	program[1].DetectAttribute("pos");
-	program[1].DetectAttribute("color");
-
-	program[2].AttatchShader(GL_VERTEX_SHADER,    "res/shaders/simple_2.vs");
-	program[2].AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/simple_2.fs");
+	program[2].AttatchShader(GL_VERTEX_SHADER,    "res/shaders/mix_textures.vs");
+	program[2].AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/mix_textures.fs");
 	program[2].Link();
 	program[2].DetectAttribute("pos");
 	program[2].DetectAttribute("color");
 	program[2].DetectAttribute("texcoord");
-	program[2].DetectUniform("U_MainTexture");
+	program[2].DetectUniform("U_SatelliteTexture");
+	program[2].DetectUniform("U_WeathTexture");
 
 }
 
@@ -117,23 +99,6 @@ void drawSence()
 	// draw scene
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// draw simple triangle with shader program;
-	glUseProgram(program[0].mProgram);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-	glEnableVertexAttribArray(program[0].GetLocation("pos"));
-	glVertexAttribPointer(program[0].GetLocation("pos"), 3, GL_FLOAT, GL_FALSE, sizeof(float)* 3, 0);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glUseProgram(0);
-
-	glUseProgram(program[1].mProgram);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-	glEnableVertexAttribArray(program[1].GetLocation("pos"));
-	glVertexAttribPointer(program[1].GetLocation("pos"),  3, GL_FLOAT, GL_FALSE, sizeof(float)* 7, 0);
-	glEnableVertexAttribArray(program[1].GetLocation("color"));
-	glVertexAttribPointer(program[1].GetLocation("color"),4, GL_FLOAT, GL_FALSE, sizeof(float)* 7, (void*)(sizeof(float)*3));
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glUseProgram(0);
-
 	glUseProgram(program[2].mProgram);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
 	glEnableVertexAttribArray(program[2].GetLocation("pos"));
@@ -144,8 +109,14 @@ void drawSence()
 	glVertexAttribPointer(program[2].GetLocation("texcoord"), 2, GL_FLOAT, GL_FALSE, sizeof(float)* 9, (void*)(sizeof(float)*7));
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture.mTextureId);
-	glUniform1i(program[2].GetLocation("U_MainTexture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture[0].mTextureId);
+	glUniform1i(program[2].GetLocation("U_SatelliteTexture"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture[1].mTextureId);
+	glUniform1i(program[2].GetLocation("U_WeathTexture"), 1);
+
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
