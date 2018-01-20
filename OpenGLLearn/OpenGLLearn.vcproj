@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -176,6 +176,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CObjModel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.cpp"
 				>
 			</File>
@@ -198,11 +202,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CObjModel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Util.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3.h"
 				>
 			</File>
 		</Filter>

@@ -3,6 +3,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+void  releaseFileContent(unsigned char* fileContent)
+{
+	if (fileContent != NULL)
+	{
+		free(fileContent);
+		fileContent = NULL;
+	}
+}
+
 unsigned char* loadFileContent(const char* fileName)
 {
 	FILE* pFile = fopen(fileName, "rb");

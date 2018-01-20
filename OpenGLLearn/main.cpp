@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include "CTexture.h"
 #include "CGPUProgram.h"
+#include "CObjModel.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -11,37 +12,9 @@ static unsigned int Pos_Top        = 10;
 static unsigned int ViewPortWidth  = 800;
 static unsigned int ViewPortHeight = 600;
 
-CTexture     texture[2];
-CGPUProgram program[3];
-GLuint      VBO[3];
-
-// An array of 3 vectors which represents 3 vertices
-// [{coordinate},{coordinate},{coordinate}]
-static const GLfloat g_vertex_buffer_data_0[] =
-{
-	-1.0f, -1.0f, 0.0f,
-	 0.0f, -1.0f, 0.0f,
-	-0.5f,  0.0f, 0.0f
-};
-
-// An array of 3 vectors which represents 3 vertices
-// [{coordinate, color},{coordinate, color},{coordinate, color}]
-static const GLfloat g_vertex_buffer_data_1[] = {
-	0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-	1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-	0.5f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
-};
-
-// An array of 3 vectors which represents 3 vertices
-// [{coordinate, color, texcoord},{coordinate, color, texcoord},{coordinate, color, texcoord}]
-static const GLfloat g_vertex_buffer_data_2[] = {
-	-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-	-1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-	 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-	 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
-	 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-};
+CTexture    texture[2];
+CGPUProgram program;
+CObjModel   objmodel;
 
 void init()
 {
@@ -61,22 +34,16 @@ void init()
 	texture[0].init("res/images/earth/earthsatellite.bmp");
 	texture[1].init("res/images/earth/earthcloudmap.bmp");
 
-	//to create three vertex buffer objects on GPU
-	glGenBuffers(3, VBO);
+	objmodel.LoadModel("res/modules/Sphere.obj");
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data_2), g_vertex_buffer_data_2, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	program[2].AttatchShader(GL_VERTEX_SHADER,    "res/shaders/mix_textures.vs");
-	program[2].AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/mix_textures.fs");
-	program[2].Link();
-	program[2].DetectAttribute("pos");
-	program[2].DetectAttribute("color");
-	program[2].DetectAttribute("texcoord");
-	program[2].DetectUniform("U_SatelliteTexture");
-	program[2].DetectUniform("U_WeathTexture");
+	program.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/objmodel.vs");
+	program.AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/objmodel.fs");
+	program.Link();
+	program.DetectAttribute("position");
+	program.DetectAttribute("normal");
+	program.DetectAttribute("texcoord");
+	program.DetectUniform("U_SatelliteTexture");
+	program.DetectUniform("U_WeathTexture");
 
 }
 
@@ -99,28 +66,23 @@ void drawSence()
 	// draw scene
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(program[2].mProgram);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-	glEnableVertexAttribArray(program[2].GetLocation("pos"));
-	glVertexAttribPointer(program[2].GetLocation("pos"),      3, GL_FLOAT, GL_FALSE, sizeof(float)* 9, 0);
-	glEnableVertexAttribArray(program[2].GetLocation("color"));
-	glVertexAttribPointer(program[2].GetLocation("color"),    4, GL_FLOAT, GL_FALSE, sizeof(float)* 9, (void*)(sizeof(float)*3));
-	glEnableVertexAttribArray(program[2].GetLocation("texcoord"));
-	glVertexAttribPointer(program[2].GetLocation("texcoord"), 2, GL_FLOAT, GL_FALSE, sizeof(float)* 9, (void*)(sizeof(float)*7));
-
+	glUseProgram(program.mProgram);
+	
 	glEnable(GL_TEXTURE_2D);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture[0].mTextureId);
-	glUniform1i(program[2].GetLocation("U_SatelliteTexture"), 0);
-
+	glUniform1i(program.GetLocation("U_SatelliteTexture"), 0);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, texture[1].mTextureId);
-	glUniform1i(program[2].GetLocation("U_WeathTexture"), 1);
+	glUniform1i(program.GetLocation("U_WeathTexture"), 1);
 
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	objmodel.Bind(program.GetLocation("position"), program.GetLocation("normal"), program.GetLocation("texcoord"));
+	objmodel.Draw();
+
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	glUseProgram(0);
+	glFinish();
+
 }
 
 
