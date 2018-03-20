@@ -10,5 +10,5 @@ void main()
 {
 	vec4 color0 = texture2D(U_SatelliteTexture, v_Texcoord.xy);
 	vec4 color1 = texture2D(U_WeathTexture, v_Texcoord.xy);
-	gl_FragColor=  color0 + color1 ;
+	gl_FragColor=  color1 ;
 }

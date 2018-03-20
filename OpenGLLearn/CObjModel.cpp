@@ -88,7 +88,7 @@ bool CObjModel::LoadModel(const char* pModelFile)
 						vertexIndex.v[2] = atoi(vtStr.c_str()) - 1;
 						
 						int curVertexIndex = -1;
-						for (int vertexIdx = 0; vertexIdx < tempVertexIndexs.size(); ++vertexIdx)
+						for (unsigned int vertexIdx = 0; vertexIdx < tempVertexIndexs.size(); ++vertexIdx)
 						{
 							if (vertexIndex == tempVertexIndexs[vertexIdx])
 							{
@@ -114,7 +114,7 @@ bool CObjModel::LoadModel(const char* pModelFile)
 		// to organize vertex data;
 		unsigned int       mnVertexNodeCount = tempVertexIndexs.size();
 		VertexNode*        mpVertexNodes = new VertexNode[mnVertexNodeCount];
-		for (int i = 0; i < mnVertexNodeCount; ++i)
+		for (unsigned int i = 0; i < mnVertexNodeCount; ++i)
 		{
 			Vector3I& VertexIndex = tempVertexIndexs[i];
 			memcpy(&mpVertexNodes[i].postion,   &tempPostions[VertexIndex.v[0]],    sizeof(Vector3F));
@@ -131,7 +131,7 @@ bool CObjModel::LoadModel(const char* pModelFile)
 
 		mIndexCount = (unsigned int)faces.size();
 		unsigned int* pIndexs = new unsigned int[mIndexCount];
-		for (int i = 0; i < mIndexCount; ++i)
+		for (unsigned int i = 0; i < mIndexCount; ++i)
 		{
 			pIndexs [i] = faces[i];
 		}
@@ -164,8 +164,12 @@ void CObjModel::Bind(GLint posLoc, GLint normalLoc, GLint textcoordLoc)
 
 void CObjModel::Draw()
 {
+
+
 	// to bind ibo and draw elements;
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 	glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glPopMatrix();
 }
