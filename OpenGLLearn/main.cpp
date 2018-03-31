@@ -6,6 +6,7 @@
 #include "Glm/ext.hpp"
 #include "CSphere.h"
 #include "CCamera.h"
+#include "CBoundaryLayer.h"
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -23,9 +24,10 @@ static GLdouble zNear              = 0.1f, zFar = 100.0f;          //the neareas
 
 
 CTexture    texture[2];
-CGPUProgram program;
+CGPUProgram program, program_;
 CSphere     earth;
 CCamera     camera;
+CBoundaryLayer   boundarylayer;
 
 POINT      originalPos;
 bool       bRotateView = false;
@@ -124,6 +126,7 @@ void init()
 	texture[1].init("res/images/earth/earthcloudmap.bmp");
 
 	earth.Init("");
+	boundarylayer.Init("res/others/countries.geo.json");
 
 	program.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/objmodel.vs");
 	program.AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/objmodel.fs");
@@ -136,6 +139,16 @@ void init()
 	program.DetectUniform("P");
 	program.DetectUniform("U_SatelliteTexture");
 	program.DetectUniform("U_WeatherTexture");
+
+
+	program_.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/line.vs");
+	program_.AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/line.fs");
+	program_.Link();
+	program_.DetectAttribute("position");
+	program_.DetectUniform("line_color");
+	program_.DetectUniform("M");
+	program_.DetectUniform("V");
+	program_.DetectUniform("P");
 }
 
 void drawSence()
@@ -178,6 +191,17 @@ void drawSence()
 	earth.Bind(program.GetLocation("position"), program.GetLocation("normal"), program.GetLocation("texcoord"));
 	earth.Draw();
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	glUseProgram(program_.mProgram);
+	glm::vec3 line_color(1.0f, 1.0f, 0.0f);
+	glUniform3fv(program_.GetLocation("line_color"), 1, glm::value_ptr(line_color));
+	glUniformMatrix4fv(program_.GetLocation("M"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+	glUniformMatrix4fv(program_.GetLocation("V"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+	glUniformMatrix4fv(program_.GetLocation("P"), 1, GL_FALSE, glm::value_ptr(ProjMatrix));
+
+	boundarylayer.Bind(program_.GetLocation("position"), program_.GetLocation("normal"), program_.GetLocation("texcoord"));
+	boundarylayer.Draw();
 
 	glUseProgram(0);
 	

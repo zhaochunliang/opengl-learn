@@ -174,7 +174,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CBoundaryLayer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCamera.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CGeoJsonParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CGISUtil.cpp"
 				>
 			</File>
 			<File
@@ -212,6 +224,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CBoundaryLayer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CCamera.h"
 				>
 			</File>
@@ -221,6 +237,10 @@
 			</File>
 			<File
 				RelativePath=".\CGeoJsonParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGISUtil.h"
 				>
 			</File>
 			<File
@@ -1159,6 +1179,18 @@
 			</File>
 			<File
 				RelativePath=".\Glm\virtrev\xstream.hpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Json"
+			>
+			<File
+				RelativePath=".\Json\cJSON.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Json\cJSON.h"
 				>
 			</File>
 		</Filter>
