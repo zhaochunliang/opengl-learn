@@ -117,9 +117,9 @@ bool CObjModel::LoadModel(const char* pModelFile)
 		for (unsigned int i = 0; i < mnVertexNodeCount; ++i)
 		{
 			Vector3I& VertexIndex = tempVertexIndexs[i];
-			memcpy(&mpVertexNodes[i].postion,   &tempPostions[VertexIndex.v[0]],    sizeof(Vector3F));
-			memcpy(&mpVertexNodes[i].normal,    &tempNormals[VertexIndex.v[1]],     sizeof(Vector3F));
-			memcpy(&mpVertexNodes[i].textcoord, &tempTextcoords[VertexIndex.v[2]],  sizeof(Vector2F));
+			memcpy(&mpVertexNodes[i].position,   &tempPostions[VertexIndex.v[0]],    sizeof(Vector3F));
+			memcpy(&mpVertexNodes[i].normal,     &tempNormals[VertexIndex.v[1]],     sizeof(Vector3F));
+			memcpy(&mpVertexNodes[i].textcoord,  &tempTextcoords[VertexIndex.v[2]],  sizeof(Vector2F));
 		}
 
 		// to generate vertex buffer obj
@@ -164,8 +164,6 @@ void CObjModel::Bind(GLint posLoc, GLint normalLoc, GLint textcoordLoc)
 
 void CObjModel::Draw()
 {
-
-
 	// to bind ibo and draw elements;
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
 	glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, 0);
