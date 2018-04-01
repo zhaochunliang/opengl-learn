@@ -1,8 +1,10 @@
 #include "CBoundaryLayer.h"
 #include "CGISUtil.h"
 
-CBoundaryLayer::CBoundaryLayer()
-:mPPolygonVertexsBuf(NULL), mPPolygonBufSize(0)
+CBoundaryLayer::CBoundaryLayer(CCamera& camera)
+: mCamera(camera)
+, mPPolygonVertexsBuf(NULL)
+, mPPolygonBufSize(0)
 {
 
 }
@@ -14,6 +16,8 @@ CBoundaryLayer::~CBoundaryLayer()
 		free(mPPolygonVertexsBuf);
 		mPPolygonVertexsBuf = NULL;
 	}
+	glDeleteBuffers(1, &mVBO);
+	glDeleteBuffers(1, &mVBO);
 }
 
 void CBoundaryLayer::Init(const char* pGeoJson)
@@ -21,32 +25,46 @@ void CBoundaryLayer::Init(const char* pGeoJson)
 	CGeoJsonParser geojsonparser;
 	geojsonparser.LoadGeoJsonContent(pGeoJson, mCountryInfoVec);
 
+	mProgram.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/line.vs");
+	mProgram.AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/line.fs");
+	mProgram.Link();
+	mProgram.DetectAttribute("position");
+	mProgram.DetectUniform("line_color");
+	mProgram.DetectUniform("M");
+	mProgram.DetectUniform("V");
+	mProgram.DetectUniform("P");
+
+
 	glGenBuffers(1, &mVBO);
 	glGenBuffers(1, &mIBO);
 }
 
-
-
-void CBoundaryLayer::Bind(GLint posLoc, GLint normalLoc, GLint textcoordLoc)
+void CBoundaryLayer::Draw()
 {
+	static float degree = 0.0f;
+	glm::mat4 TranslateMat= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+	glm::mat4 RotateMat   = glm::rotate(glm::mat4(1.0), degree, glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 ScaleMat    = glm::scale(glm::mat4(1.0), glm::vec3(1.0));
+	glm::mat4 ModelMatrix = TranslateMat * RotateMat * ScaleMat; 
+
+	glUseProgram(mProgram.mProgram);
+	glm::vec3 line_color(1.0f, 1.0f, 0.0f);
+	glUniform3fv(mProgram.GetLocation("line_color"), 1, glm::value_ptr(line_color));
+	glUniformMatrix4fv(mProgram.GetLocation("M"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+	glUniformMatrix4fv(mProgram.GetLocation("V"), 1, GL_FALSE, glm::value_ptr(mCamera.mViewMatrix));
+	glUniformMatrix4fv(mProgram.GetLocation("P"), 1, GL_FALSE, glm::value_ptr(mCamera.mProjMatrix));
+
 	// bind attribute data
+	GLuint posLoc = mProgram.GetLocation("position");
 	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	glEnableVertexAttribArray(posLoc);
 	glVertexAttribPointer(posLoc,      3, GL_FLOAT, GL_FALSE, sizeof(Vector3F), 0);
-	//glEnableVertexAttribArray(normalLoc);
-	//glVertexAttribPointer(normalLoc,   3, GL_FLOAT, GL_FALSE, sizeof(VertexNode), (void*)(sizeof(float)*3));
-	//glEnableVertexAttribArray(textcoordLoc);
-	//glVertexAttribPointer(textcoordLoc,2, GL_FLOAT, GL_FALSE, sizeof(VertexNode), (void*)(sizeof(float)*6));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
 
-void CBoundaryLayer::Draw()
-{
 	// to bind ibo and draw elements;
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT_FACE);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_FRONT_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
 	for (unsigned int i=0; i< mCountryInfoVec.size(); ++i)
 	{
 		CountryInfo& bound = mCountryInfoVec[i];
@@ -72,9 +90,9 @@ void CBoundaryLayer::Draw()
 			{
 				double x =0, y=0, z=0;
 				CGISUtil::getXYZWithDLonLat(polygon[ptidx].x, polygon[ptidx].y, x, y, z);
-				mPPolygonVertexsBuf[ptidx].x = x;
-				mPPolygonVertexsBuf[ptidx].y = y;
-				mPPolygonVertexsBuf[ptidx].z = z;
+				mPPolygonVertexsBuf[ptidx].x = (float)x;
+				mPPolygonVertexsBuf[ptidx].y = (float)y;
+				mPPolygonVertexsBuf[ptidx].z = (float)z;
 
 				pFaces[ptidx] = ptidx;
 			}
@@ -94,5 +112,5 @@ void CBoundaryLayer::Draw()
 		}
 	}
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glPopMatrix();
+	glUseProgram(0);
 }

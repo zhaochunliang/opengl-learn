@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSkyBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CSphere.cpp"
 				>
 			</File>
@@ -256,6 +260,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSkyBox.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CSphere.h"
 				>
 			</File>
@@ -273,6 +281,10 @@
 			</File>
 			<File
 				RelativePath=".\Vector3.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector4.h"
 				>
 			</File>
 		</Filter>

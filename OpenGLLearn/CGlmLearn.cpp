@@ -1,12 +1,9 @@
 #include "CGlmLearn.h"
-#include "Glm/glm.hpp"
-#include "Glm/ext.hpp"
 
 #include <iostream>
 #include <iomanip>
-using namespace std;
 
-void static output_vector(glm::vec4& vector)
+void CGlmLearn::output_vector(glm::vec4& vector)
 {
 	cout<<"------------------------------"<<endl;
 	for (unsigned int i= 0; i < 4; ++i)
@@ -17,9 +14,10 @@ void static output_vector(glm::vec4& vector)
 	cout<<"##############################"<<endl;
 }
 
-void static output_matrix(glm::mat4& matrix)
+
+void  CGlmLearn::output_matrix(glm::mat4& matrix, string matrixname /*=matrix*/)
 {
-	cout<<"------------------------------"<<endl;
+	cout<<"------------"<< matrixname <<"-----------------"<<endl;
 	for (unsigned int i= 0; i < matrix.row_size(); ++i)
 	{
 		for (unsigned int j=0; j < matrix.col_size(); ++j)

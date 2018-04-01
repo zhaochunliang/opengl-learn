@@ -1,11 +1,8 @@
 #include <Windows.h>
 #include "vld.h"
-#include "CTexture.h"
-#include "CGPUProgram.h"
-#include "Glm/glm.hpp"
-#include "Glm/ext.hpp"
-#include "CSphere.h"
 #include "CCamera.h"
+#include "CSphere.h"
+#include "CSkyBox.h"
 #include "CBoundaryLayer.h"
 
 #pragma comment(lib, "opengl32.lib")
@@ -18,16 +15,11 @@ static unsigned int Pos_Left       = 100;
 static unsigned int Pos_Top        = 100;
 static unsigned int ViewPortWidth  = 800;
 static unsigned int ViewPortHeight = 600;
-static GLdouble fovy               = 45.0f;                        //eye opened angle
-static GLdouble aspect             = 1.2f;                         //ViewPortWidth/ViewPortHeight;
-static GLdouble zNear              = 0.1f, zFar = 100.0f;          //the neareast and farest distance which eye can see;
 
-
-CTexture    texture[2];
-CGPUProgram program, program_;
-CSphere     earth;
-CCamera     camera;
-CBoundaryLayer   boundarylayer;
+CCamera                camera;
+CSphere                earth(camera);
+CSkyBox                skybox(camera);
+CBoundaryLayer         boundarylayer(camera);
 
 POINT      originalPos;
 bool       bRotateView = false;
@@ -122,89 +114,30 @@ void init()
 	// init OpenGL
 	glewInit();
 
-	texture[0].init("res/images/earth/earthsatellite.bmp");
-	texture[1].init("res/images/earth/earthcloudmap.bmp");
-
-	earth.Init("");
+	skybox.Init("res/images/skybox");
+	earth.Init("res/images/earth");
 	boundarylayer.Init("res/others/countries.geo.json");
 
-	program.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/objmodel.vs");
-	program.AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/objmodel.fs");
-	program.Link();
-	program.DetectAttribute("position");
-	program.DetectAttribute("normal");
-	program.DetectAttribute("texcoord");
-	program.DetectUniform("M");
-	program.DetectUniform("V");
-	program.DetectUniform("P");
-	program.DetectUniform("U_SatelliteTexture");
-	program.DetectUniform("U_WeatherTexture");
-
-
-	program_.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/line.vs");
-	program_.AttatchShader(GL_FRAGMENT_SHADER,  "res/shaders/line.fs");
-	program_.Link();
-	program_.DetectAttribute("position");
-	program_.DetectUniform("line_color");
-	program_.DetectUniform("M");
-	program_.DetectUniform("V");
-	program_.DetectUniform("P");
 }
 
 void drawSence()
 {
-
-	static float degree = 0.0f;
-	degree += 0.1f;
-	if (degree >= 360)
-	{
-		degree =degree - 360.0f;
-	}
-	glm::mat4 TranslateMat= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-	glm::mat4 RotateMat   = glm::rotate(glm::mat4(1.0), degree, glm::vec3(0.3, 1.0, 0.02));
-	glm::mat4 ScaleMat    = glm::scale(glm::mat4(1.0), glm::vec3(1.0));
-	glm::mat4 ModelMatrix = TranslateMat * RotateMat * ScaleMat; 
-	//glm::mat4 ViewMatrix = glm::mat4(1.0f);
-	glm::mat4 ViewMatrix = glm::lookAt(glm::vec3(camera.mPosition.x, camera.mPosition.y, camera.mPosition.z), glm::vec3(camera.mViewCenter.x, camera.mViewCenter.y, camera.mViewCenter.z), glm::vec3(camera.mUp.x, camera.mUp.y, camera.mUp.z));
-	glm::mat4 ProjMatrix = glm::perspective<float>((GLfloat)fovy, (GLfloat)aspect, (GLfloat)zNear, (GLfloat)zFar);
-
-
 	// clear color buffer and depth buffer
 	glClearColor(0.1f, 0.4f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 
-	glUseProgram(program.mProgram);
-	glUniformMatrix4fv(program.GetLocation("M"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
-	glUniformMatrix4fv(program.GetLocation("V"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	glUniformMatrix4fv(program.GetLocation("P"), 1, GL_FALSE, glm::value_ptr(ProjMatrix));
+	// draw sky box;
+	skybox.Draw();
 
-	glEnable(GL_TEXTURE_2D);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture[0].mTextureId);
-	glUniform1i(program.GetLocation("U_SatelliteTexture"), 0);
-	
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture[1].mTextureId);
-	glUniform1i(program.GetLocation("U_WeatherTexture"),   1);
-
-	earth.Bind(program.GetLocation("position"), program.GetLocation("normal"), program.GetLocation("texcoord"));
+	// draw earth
 	earth.Draw();
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	glUseProgram(program_.mProgram);
-	glm::vec3 line_color(1.0f, 1.0f, 0.0f);
-	glUniform3fv(program_.GetLocation("line_color"), 1, glm::value_ptr(line_color));
-	glUniformMatrix4fv(program_.GetLocation("M"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
-	glUniformMatrix4fv(program_.GetLocation("V"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
-	glUniformMatrix4fv(program_.GetLocation("P"), 1, GL_FALSE, glm::value_ptr(ProjMatrix));
-
-	boundarylayer.Bind(program_.GetLocation("position"), program_.GetLocation("normal"), program_.GetLocation("texcoord"));
-	boundarylayer.Draw();
-
-	glUseProgram(0);
 	
+	// draw country boundary
+	boundarylayer.Draw();
+	
+	// draw other scenes
+
 	glFinish();
 }
 

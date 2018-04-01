@@ -106,8 +106,8 @@ int CGeoJsonParser::LoadGeoJsonContent(const char* geojsonfile, std::vector<Coun
 										while(pPolygon_)
 										{
 											Vector2F point;
-											point.x   = pPolygon_->child->valuedouble;
-											point.y   = pPolygon_->child->next->valuedouble;
+											point.x   = (float)pPolygon_->child->valuedouble;
+											point.y   = (float)pPolygon_->child->next->valuedouble;
 											polygon.push_back(point);
 											pPolygon_ = pPolygon_->next;
 										}
@@ -124,8 +124,8 @@ int CGeoJsonParser::LoadGeoJsonContent(const char* geojsonfile, std::vector<Coun
 											while(pPolygon_)
 											{
 												Vector2F point;
-												point.x   = pPolygon_->child->valuedouble;
-												point.y   = pPolygon_->child->next->valuedouble;
+												point.x   = (float)pPolygon_->child->valuedouble;
+												point.y   = (float)pPolygon_->child->next->valuedouble;
 												polygon.push_back(point);
 												pPolygon_ = pPolygon_->next;
 											}

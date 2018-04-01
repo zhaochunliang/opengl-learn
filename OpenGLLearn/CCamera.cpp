@@ -4,14 +4,20 @@
 #include <gl/GLU.h>
 
 CCamera::CCamera()
-: mPosition(0.0f, 0.0f, 0.0f)
+: mEyePosition(0.0f, 0.0f, 0.0f)
 , mViewCenter(0.0f, 0.0f, -1.0f)
 , mUp(0.0f,1.0f,0.0f)
 , mbMoveLeft(false)
 , mbMoveRight(false)
 , mbMoveForward(false)
 , mbMoveBackward(false)
+, mfovy(45.0f)
+, maspect(1.2f)
+, mzNear(0.1f)
+, mzFar(1000.0f)
 {
+	mViewMatrix = glm::lookAt(glm::vec3(mEyePosition.x, mEyePosition.y, mEyePosition.z), glm::vec3(mViewCenter.x, mViewCenter.y, mViewCenter.z), glm::vec3(mUp.x, mUp.y, mUp.z));
+	mProjMatrix = glm::perspective<float>(mfovy, maspect, mzNear, mzFar);
 
 }
 
@@ -22,7 +28,7 @@ CCamera::~CCamera()
 
 void CCamera::RotateView(float angle, float x, float y, float z)
 {
-	Vector3F viewDirection = mViewCenter - mPosition;
+	Vector3F viewDirection = mViewCenter - mEyePosition;
 	Vector3F newDirection;
 	float C = cosf(angle);
 	float S = sinf(angle);
@@ -36,7 +42,7 @@ void CCamera::RotateView(float angle, float x, float y, float z)
 	Vector3F tempZ(x*z*(1 - C) - y*S,y*z*(1 - C)+x*S, C + z*z*(1-C));
 	newDirection.z = tempZ*viewDirection;
 
-	mViewCenter = mPosition + newDirection;
+	mViewCenter = mEyePosition + newDirection;
 }
 
 
@@ -85,7 +91,7 @@ void CCamera::Update(float deltaTime)
 
 		Vector3F forwardDirection(0.0f, 0.0f, -1.0f);
 		forwardDirection.Normalize();
-		mPosition   = mPosition   + forwardDirection * movespeed * deltaTime;
+		mEyePosition   = mEyePosition   + forwardDirection * movespeed * deltaTime;
 		mViewCenter = mViewCenter + forwardDirection * movespeed * deltaTime;
 	}
 
@@ -96,20 +102,18 @@ void CCamera::Update(float deltaTime)
 
 		Vector3F backwardDirection(0.0f, 0.0f, 1.0f);
 		backwardDirection.Normalize();
-		mPosition   = mPosition   + backwardDirection * movespeed * deltaTime;
+		mEyePosition   = mEyePosition   + backwardDirection * movespeed * deltaTime;
 		mViewCenter = mViewCenter + backwardDirection * movespeed * deltaTime;
 	}
 
 	//set model view matrix
-	gluLookAt(mPosition.x, mPosition.y, mPosition.z,
-		mViewCenter.x, mViewCenter.y, mViewCenter.z,
-		mUp.x, mUp.y, mUp.z);
+	mViewMatrix = glm::lookAt(glm::vec3(mEyePosition.x, mEyePosition.y, mEyePosition.z), glm::vec3(mViewCenter.x, mViewCenter.y, mViewCenter.z), glm::vec3(mUp.x, mUp.y, mUp.z));
 }
 
 void CCamera::Pitch(float angle)
 {
 	//right direction vector
-	Vector3F viewDirection = mViewCenter - mPosition;
+	Vector3F viewDirection = mViewCenter - mEyePosition;
 	viewDirection.Normalize();
 	Vector3F rightDirection = viewDirection ^ mUp;
 	rightDirection.Normalize();
@@ -119,4 +123,32 @@ void CCamera::Pitch(float angle)
 void CCamera::Yaw(float angle)
 {
 	RotateView(angle, mUp.x, mUp.y, mUp.z);
+}
+
+void CCamera::setViewport(const Vector4F &viewport)
+{
+	if (mViewport == viewport)
+	{
+		return;
+	}
+
+	mViewport = viewport;
+}
+
+void CCamera::lookAt(const Vector3F &eye, const Vector3F &center, const Vector3F &up)
+{
+	mEyePosition  = eye;
+	mViewCenter   = center;
+	mUp           = up;
+	mViewMatrix = glm::lookAt(glm::vec3(mEyePosition.x, mEyePosition.y, mEyePosition.z), glm::vec3(mViewCenter.x, mViewCenter.y, mViewCenter.z), glm::vec3(mUp.x, mUp.y, mUp.z));
+	
+}
+
+void CCamera::perspective(float fovy, float aspect, float zNear, float zFar, const Vector2F& offset)
+{
+	mfovy       = fovy;
+	maspect     = aspect;
+	mzNear      = zNear;
+	mzFar       = zFar;
+	mProjMatrix = glm::perspective<float>(mfovy, maspect, mzNear, mzFar);
 }
