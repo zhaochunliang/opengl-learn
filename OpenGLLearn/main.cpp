@@ -5,7 +5,9 @@
 #include "CSkyBox.h"
 #include "CBoundaryLayer.h"
 #include "CSpriteImge.h"
+#include "CParticalSystem.h"
 #include "CTextureMgr.h"
+
 
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
@@ -25,6 +27,7 @@ CSphere                earth(camera);
 CSkyBox                skybox(camera);
 CBoundaryLayer         boundarylayer(camera);
 CSpriteImage           compass(camera);
+CParticalSystem        partical(camera);
 
 RECT*      p_rect = NULL;
 POINT      originalPos;
@@ -142,9 +145,10 @@ void init()
 	boundarylayer.Init("res/others/countries.geo.json");
 	compass.Init("res/images/south_north.jpg");
 	compass.SetRect(-ViewPortWidth/2.0f + 128.0f/2, ViewPortHeight/2.0f - 128.f/2, 128.0f, 128.0f);
+	partical.Init(ViewPortWidth, ViewPortHeight, 200);
 }
 
-void drawSence()
+void drawSence(float deltaTime)
 {
 	// clear color buffer and depth buffer
 	glClearColor(0.1f, 0.4f, 0.6f, 1.0f);
@@ -168,6 +172,9 @@ void drawSence()
 	// draw ui compass
 	compass.Draw();
 
+	// draw partical
+	partical.Update(deltaTime);
+	partical.Draw();
 
 	glFinish();
 }
@@ -261,7 +268,7 @@ INT WINAPI WinMain( __in HINSTANCE hInstance, __in_opt HINSTANCE hPrevInstance, 
 		camera.Update(timeElapse);
 
 		// draw scene at the back
-		drawSence();
+		drawSence(timeElapse);
 
 		// present scene to window
 		SwapBuffers(dc);

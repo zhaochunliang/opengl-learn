@@ -14,5 +14,10 @@ public:
 	GLuint mTextureId;
 };
 
+class CParticleTexture: public CTexture
+{
+public:
+	void init(int width, int height);
+};
 
 #endif

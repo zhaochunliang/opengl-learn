@@ -3,8 +3,9 @@
 
 CSpriteImage::CSpriteImage(CCamera& camera)
 : mCamera(camera)
+, mTranslatePos(0.0f, 0.0f, 0.0f)
 {
-
+	
 }
 
 CSpriteImage::~CSpriteImage()
@@ -16,7 +17,10 @@ CSpriteImage::~CSpriteImage()
 void CSpriteImage::Init(const char* pfile)
 {
 	// init texture
-	mPTexture = CTextureMgr::CreateTexture(pfile);
+	if (pfile != NULL)
+	{
+		mPTexture = CTextureMgr::CreateTexture(pfile);
+	}
 
 	// init shader program
 	mProgram.AttatchShader(GL_VERTEX_SHADER,    "res/shaders/region_texture.vs");
@@ -57,7 +61,7 @@ void CSpriteImage::SetRect(float x, float y, float width, float height)
 void CSpriteImage::Draw()
 {
 	static float degree = 0.0f;
-	glm::mat4 TranslateMat= glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+	glm::mat4 TranslateMat= glm::translate(glm::mat4(1.0f), glm::vec3(mTranslatePos.x, mTranslatePos.y, mTranslatePos.z));
 	glm::mat4 RotateMat   = glm::rotate(glm::mat4(1.0), degree, glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 ScaleMat    = glm::scale(glm::mat4(1.0), glm::vec3(1.0));
 	glm::mat4 ModelMatrix = TranslateMat * RotateMat * ScaleMat; 

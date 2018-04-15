@@ -2,6 +2,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
+
+float randf()
+{
+	return (float)rand() / (float)RAND_MAX;
+}
+
+float srandf()
+{
+	return randf() * 2.0f - 1.0f;
+}
 
 void  releaseFileContent(unsigned char* fileContent)
 {

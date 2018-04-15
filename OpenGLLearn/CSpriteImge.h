@@ -24,5 +24,6 @@ public:
 	CGPUProgram                 mProgram;
 	CTexture*                   mPTexture;
 	VertexNode                  mVertexts[4];
+	Vector3F                    mTranslatePos;
 };
 #endif // OPENGL_LEARN_SPRITE_IMAGE_H
