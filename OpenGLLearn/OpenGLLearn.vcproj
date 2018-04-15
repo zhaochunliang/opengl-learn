@@ -210,7 +210,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSpriteImge.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CTextureMgr.cpp"
 				>
 			</File>
 			<File
@@ -268,7 +276,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSpriteImge.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTextureMgr.h"
 				>
 			</File>
 			<File
@@ -1203,6 +1219,50 @@
 			</File>
 			<File
 				RelativePath=".\Json\cJSON.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Soil"
+			>
+			<File
+				RelativePath=".\Soil\image_DXT.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\image_DXT.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\image_helper.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\image_helper.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\SOIL.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\SOIL.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\stb_image_aug.c"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\stb_image_aug.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\stbi_DDS_aug.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Soil\stbi_DDS_aug_c.h"
 				>
 			</File>
 		</Filter>

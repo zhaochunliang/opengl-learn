@@ -30,6 +30,11 @@ public:
 			T x,y,z,w;
 		};
 
+		struct 
+		{
+			T left,top,right,bottom;
+		};
+
 		T v[4];
 	};
 };

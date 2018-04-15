@@ -3,8 +3,9 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
-CCamera::CCamera()
-: mEyePosition(0.0f, 0.0f, 0.0f)
+CCamera::CCamera(Vector4F& viewport)
+: mViewPort(viewport)
+, mEyePosition(0.0f, 0.0f, 0.0f)
 , mViewCenter(0.0f, 0.0f, -1.0f)
 , mUp(0.0f,1.0f,0.0f)
 , mbMoveLeft(false)
@@ -17,6 +18,8 @@ CCamera::CCamera()
 , mzFar(1000.0f)
 {
 	mViewMatrix = glm::lookAt(glm::vec3(mEyePosition.x, mEyePosition.y, mEyePosition.z), glm::vec3(mViewCenter.x, mViewCenter.y, mViewCenter.z), glm::vec3(mUp.x, mUp.y, mUp.z));
+
+	maspect = (mViewPort.right - mViewPort.left) / (mViewPort.top - mViewPort.bottom);
 	mProjMatrix = glm::perspective<float>(mfovy, maspect, mzNear, mzFar);
 
 }
@@ -127,12 +130,14 @@ void CCamera::Yaw(float angle)
 
 void CCamera::setViewport(const Vector4F &viewport)
 {
-	if (mViewport == viewport)
+	if (mViewPort == viewport)
 	{
 		return;
 	}
 
-	mViewport = viewport;
+	mViewPort = viewport;
+	maspect = (mViewPort.right - mViewPort.left) / (mViewPort.top - mViewPort.bottom);
+	mProjMatrix = glm::perspective<float>(mfovy, maspect, mzNear, mzFar);
 }
 
 void CCamera::lookAt(const Vector3F &eye, const Vector3F &center, const Vector3F &up)
@@ -150,5 +155,17 @@ void CCamera::perspective(float fovy, float aspect, float zNear, float zFar, con
 	maspect     = aspect;
 	mzNear      = zNear;
 	mzFar       = zFar;
+	mProjMatrix = glm::perspective<float>(mfovy, maspect, mzNear, mzFar);
+}
+
+void CCamera::SwitchTo2D()
+{
+	mViewMatrix = glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0));
+	mProjMatrix = glm::ortho<float>(mViewPort.left, mViewPort.right, mViewPort.bottom, mViewPort.top);
+}
+
+void CCamera::SwitchTo3D()
+{
+	mViewMatrix = glm::lookAt(glm::vec3(mEyePosition.x, mEyePosition.y, mEyePosition.z), glm::vec3(mViewCenter.x, mViewCenter.y, mViewCenter.z), glm::vec3(mUp.x, mUp.y, mUp.z));
 	mProjMatrix = glm::perspective<float>(mfovy, maspect, mzNear, mzFar);
 }

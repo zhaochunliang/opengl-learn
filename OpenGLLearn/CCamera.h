@@ -6,7 +6,7 @@
 class CCamera
 {
 public:
-	CCamera();
+	CCamera(Vector4F& viewport);
 	~CCamera();
 
 public:
@@ -20,13 +20,16 @@ public:
 
 	void perspective(float fovy, float aspect, float zNear, float zFar, const Vector2F& offset);
 
+	void SwitchTo2D();
+
+	void SwitchTo3D();
 
 protected:
 	void RotateView(float angle, float x, float y, float z);
 
 
 public:
-	Vector4F      mViewport;
+	Vector4F      mViewPort;
 	Vector3F      mEyePosition;
 	Vector3F      mViewCenter;
 	Vector3F      mUp;
