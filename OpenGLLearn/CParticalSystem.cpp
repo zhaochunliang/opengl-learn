@@ -59,7 +59,7 @@ void CParticalSystem::Init(int viewPortWidth, int viewPortHeight, int count)
 
 void CParticalSystem::Update(float deltaTime)
 {
-	for (int idx= 0; idx < mParticalVec.size(); ++idx)
+	for (unsigned int idx= 0; idx < mParticalVec.size(); ++idx)
 	{
 		CPartical* pPartical = mParticalVec[idx];
 		if (pPartical)
@@ -71,7 +71,7 @@ void CParticalSystem::Update(float deltaTime)
 
 void CParticalSystem::Draw()
 {
-	for (int idx= 0; idx < mParticalVec.size(); ++idx)
+	for (unsigned int idx= 0; idx < mParticalVec.size(); ++idx)
 	{
 		CPartical* pPartical = mParticalVec[idx];
 		if (pPartical)
@@ -88,7 +88,7 @@ void CParticalSystem::releaseReourses()
 		delete mPTexture;
 		mPTexture = NULL;
 	}
-	for (int idx= 0; idx < mParticalVec.size(); ++idx)
+	for (unsigned int idx= 0; idx < mParticalVec.size(); ++idx)
 	{
 		CPartical* pPartical = mParticalVec[idx];
 		if (pPartical)

@@ -65,6 +65,7 @@ void CBoundaryLayer::Draw()
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_FRONT_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(1.0f);
 	for (unsigned int i=0; i< mCountryInfoVec.size(); ++i)
 	{
 		CountryInfo& bound = mCountryInfoVec[i];

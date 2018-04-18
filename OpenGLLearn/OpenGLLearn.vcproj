@@ -218,6 +218,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSpriteSheet.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTexture.cpp"
 				>
 			</File>
@@ -285,6 +289,10 @@
 			</File>
 			<File
 				RelativePath=".\CSpriteImge.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CSpriteSheet.h"
 				>
 			</File>
 			<File
@@ -422,11 +430,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtc\epsilon.hpp"
+				RelativePath=".\Glm\gtx\epsilon.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtx\epsilon.hpp"
+				RelativePath=".\Glm\gtc\epsilon.hpp"
 				>
 			</File>
 			<File
@@ -762,11 +770,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtc\noise.hpp"
+				RelativePath=".\Glm\gtx\noise.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtx\noise.hpp"
+				RelativePath=".\Glm\gtc\noise.hpp"
 				>
 			</File>
 			<File
@@ -862,19 +870,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtc\quaternion.inl"
-				>
-			</File>
-			<File
 				RelativePath=".\Glm\gtx\quaternion.inl"
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtc\random.hpp"
+				RelativePath=".\Glm\gtc\quaternion.inl"
 				>
 			</File>
 			<File
 				RelativePath=".\Glm\gtx\random.hpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Glm\gtc\random.hpp"
 				>
 			</File>
 			<File
@@ -890,11 +898,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtc\reciprocal.hpp"
+				RelativePath=".\Glm\gtx\reciprocal.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtx\reciprocal.hpp"
+				RelativePath=".\Glm\gtc\reciprocal.hpp"
 				>
 			</File>
 			<File
@@ -1146,11 +1154,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtx\ulp.hpp"
+				RelativePath=".\Glm\gtc\ulp.hpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Glm\gtc\ulp.hpp"
+				RelativePath=".\Glm\gtx\ulp.hpp"
 				>
 			</File>
 			<File

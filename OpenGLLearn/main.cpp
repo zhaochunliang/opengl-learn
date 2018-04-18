@@ -6,6 +6,7 @@
 #include "CBoundaryLayer.h"
 #include "CSpriteImge.h"
 #include "CParticalSystem.h"
+#include "CSpriteSheet.h"
 #include "CTextureMgr.h"
 
 
@@ -28,6 +29,7 @@ CSkyBox                skybox(camera);
 CBoundaryLayer         boundarylayer(camera);
 CSpriteImage           compass(camera);
 CParticalSystem        partical(camera);
+CSpriteSheet           spritesheet(camera);
 
 RECT*      p_rect = NULL;
 POINT      originalPos;
@@ -49,6 +51,7 @@ LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		glViewport(0, 0, ViewPortWidth, ViewPortHeight);
 		camera.setViewport(ViewPort);
 		compass.SetRect(-ViewPortWidth/2.0f + 128.0f/2, ViewPortHeight/2.0f - 128.f/2, 128.0f, 128.0f);
+		spritesheet.SetRect(ViewPortWidth / 2.0f - 256.0f/2, ViewPortHeight/2.0f - 256.0f/2, 256.0f, 256.0f);
 		break;
 	case WM_SIZING:
 		p_rect = (RECT*)lParam; 
@@ -146,6 +149,8 @@ void init()
 	compass.Init("res/images/south_north.jpg");
 	compass.SetRect(-ViewPortWidth/2.0f + 128.0f/2, ViewPortHeight/2.0f - 128.f/2, 128.0f, 128.0f);
 	partical.Init(ViewPortWidth, ViewPortHeight, 200);
+	spritesheet.Init("res/images/spritesheet");
+	spritesheet.SetRect(ViewPortWidth / 2.0f - 256.0f/2, ViewPortHeight/2.0f - 256.0f/2, 256.0f, 256.0f);
 }
 
 void drawSence(float deltaTime)
@@ -175,6 +180,9 @@ void drawSence(float deltaTime)
 	// draw partical
 	partical.Update(deltaTime);
 	partical.Draw();
+
+	spritesheet.Update(deltaTime);
+	spritesheet.Draw();
 
 	glFinish();
 }

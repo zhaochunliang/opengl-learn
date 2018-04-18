@@ -55,7 +55,7 @@ void CParticleTexture::init(int width, int height)
 	const int  imageBufferSize = width * height * 4;
 	unsigned char* pImageBuffer = new unsigned char[imageBufferSize];
 	
-	float maxDist2Center = sqrtf(width * width + height * height) / 2.0f;
+	float maxDist2Center = sqrtf((float)(width * width + height * height)) / 2.0f;
 	float centerX = width  / 2.0f;
 	float centerY = height / 2.0f;
 	for (int x=0; x < width; ++x)
